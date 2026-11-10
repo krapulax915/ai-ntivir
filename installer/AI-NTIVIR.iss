@@ -1,4 +1,6 @@
 ; Inno Setup 6 script for AI-NTIVIR (AI Antivirus) - Windows 10/11
+; NOTE: this Inno Setup 6.5 build wants "=" in [Setup] directives and
+; "Param: Value" in the row-style sections ([Languages], [Files], ...).
 ; Build: ISCC.exe installer\AI-NTIVIR.iss
 ; Result: installer\output\AI-NTIVIR-Setup-<version>.exe
 
@@ -6,10 +8,9 @@
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "Krapulix Soft"
 #define MyAppURL "https://ai-ntivir.eu"
-#define MyAppExeName "AI-NTIVIR.exe"
 
 [Setup]
-AppId={{7A3E1C92-5F4B-4D6E-9B21-8C4D2E6F1A93}
+AppId=AI-NTIVIR-KRAPULIXSOFT-7A3E1C92-5F4B-4D6E-9B21-8C4D2E6F1A93
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppName} {#MyAppVersion}
@@ -31,8 +32,8 @@ Uninstallable=yes
 SetupLogging=yes
 
 [Languages]
-Name: "english"; MessagesFile="compiler:Default.isl"
-Name: "hungarian"; MessagesFile="compiler:Languages\Hungarian.isl"
+Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "hungarian"; MessagesFile: "compiler:Languages\Hungarian.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
@@ -51,5 +52,5 @@ Name: "{autodesktop}\AI-NTIVIR"; Filename: "{app}\AI-NTIVIR.exe"; Tasks: desktop
 Filename: "{app}\AI-NTIVIR.exe"; Description: "Launch AI-NTIVIR"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
-; Remove runtime data (logs/quarantine under ProgramData) is intentionally kept
+; Runtime logs/quarantine under ProgramData are intentionally kept on uninstall
 Type: files; Name: "{app}\aintivirus_debug.log"
