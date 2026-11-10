@@ -31,17 +31,16 @@ if ($apiToken -like 'PASTE_*') { Write-Error "Fill in signpath_config.json first
 
 $apiBase = "https://api.signpath.io/v1/organizations/$orgId"
 
-# 1. Pack the file into a zip (SignPath submits/returns zip artifacts)
-$zipPath = [System.IO.Path]::ChangeExtension($File, '.zip')
-if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
-Compress-Archive -Path $File -DestinationPath $zipPath
-
+# 1. Submit the RAW installer. SignPath's default <pe-file> artifact
+#    configuration expects a PE file (.exe) as the artifact root - do NOT
+#    zip it (a zip root yields "The file does not correspond to the
+#    specified file type").
 Write-Host "Submitting signing request for $(Split-Path $File -Leaf) ..."
 $headers = @{ Authorization = "Bearer $apiToken" }
 
 # 2. Create the signing request
 $createUri = "$apiBase/signing-requests`?project-id=$projectId&signing-policy-id=$policyId"
-$response = Invoke-RestMethod -Method Post -Uri $createUri -Headers $headers -InFile $zipPath -ContentType 'application/zip'
+$response = Invoke-RestMethod -Method Post -Uri $createUri -Headers $headers -InFile $File -ContentType 'application/octet-stream'
 
 $requestId = $response.id
 Write-Host "Signing request created: $requestId (status: $($response.status))"
@@ -61,19 +60,13 @@ if ($response.status -ne 'Completed') {
     throw "Signing failed with status: $($response.status) - $($response | ConvertTo-Json -Depth 5)"
 }
 
-# 4. Download the signed artifact
-$signedZip = [System.IO.Path]::ChangeExtension($File, '.signed.zip')
-Invoke-WebRequest -Uri "$apiBase/signing-requests/$requestId/signed-artifact" -Headers $headers -OutFile $signedZip
+# 4. Download the signed artifact (raw signed PE file)
+$signedPath = "$File.signed"
+Invoke-WebRequest -Uri "$apiBase/signing-requests/$requestId/signed-artifact" -Headers $headers -OutFile $signedPath
 
 # 5. Replace the original with the signed file
-$signedExtractDir = Join-Path $env:TEMP ("signpath_" + [guid]::NewGuid())
-Expand-Archive -Path $signedZip -DestinationPath $signedExtractDir
-$signedFile = Get-ChildItem $signedExtractDir -Recurse -File | Select-Object -First 1
-Copy-Item $signedFile.FullName $File -Force
-
-Remove-Item $signedZip -Force -ErrorAction SilentlyContinue
-Remove-Item $signedExtractDir -Recurse -Force -ErrorAction SilentlyContinue
-Remove-Item $zipPath -Force -ErrorAction SilentlyContinue
+Copy-Item $signedPath $File -Force
+Remove-Item $signedPath -Force -ErrorAction SilentlyContinue
 
 Write-Host "SIGNED OK: $File" -ForegroundColor Green
 Write-Host "Signature check: Get-AuthenticodeSignature '$File' | Format-List"
