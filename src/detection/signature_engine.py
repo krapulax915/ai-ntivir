@@ -4,7 +4,10 @@ import json
 import logging
 import threading
 import time
+import socket
+import ipaddress
 from typing import Dict, List, Set, Optional
+from urllib.parse import urlparse
 from pathlib import Path
 import requests
 import sqlite3
@@ -14,6 +17,8 @@ import sqlite3
 # covers plain-ZIP deployments where the database file is missing.
 SIGNATURE_DB_DOWNLOAD_URL = "https://files.catbox.moe/lkjqct.db"
 SIGNATURE_DB_SHA256 = "9e890c7177d5ccf307c3d3e4f410bc20b51cd10ad8651f33c951b3ca6b54de4b"
+# SSRF hardening: only these HTTPS hosts may serve the signature database
+SIGNATURE_DB_ALLOWED_HOSTS = frozenset({'files.catbox.moe'})
 
 class SignatureEngine:
     """Signature-based threat detection engine"""
