@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Runtime artifacts (created at first run)
+logs/
+quarantine/
+*.db-journal
+ai_learning.db
+anomaly_detection.db
+browser_protection.db
+enhanced_anomaly_detection.db
+updates.db
+cloud_uploads.db
+consent_request.json
+client_id.txt
+user_consent.json
+uploaded_logs_*.json
+
+# NOTE: signatures/signatures.db is tracked via Git LFS (required data)
+
+# Build output
+build/
+dist/
+installer/output/
+*.spec.bak
+
+# IDE / tools
+.vscode/
+.idea/
+.mimosa/
+*.code-workspace
+
+# OS
+Thumbs.db
+.DS_Store

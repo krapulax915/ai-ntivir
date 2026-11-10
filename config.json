@@ -1,0 +1,47 @@
+{
+  "ai_engine": {
+    "model_path": "models/virus_detection_balanced.onnx",
+    "scaler_path": "models/feature_scaler.pkl",
+    "threat_threshold": 0.7,
+    "auto_update": true,
+    "fallback_enabled": true
+  },
+  "signature_engine": {
+    "database_path": "signatures/signatures.db",
+    "auto_update": true,
+    "update_interval": 24
+  },
+  "anomaly_detector": {
+    "threshold": 0.85,
+    "learning_enabled": true,
+    "adaptive_thresholds": true
+  },
+  "real_time_monitoring": {
+    "enabled": true,
+    "auto_start": true,
+    "monitored_paths": [
+      "~/Downloads",
+      "~/Desktop",
+      "~/Documents"
+    ],
+    "quarantine_enabled": true
+  },
+  "heuristic_analysis": {
+    "enabled": true,
+    "entropy_analysis": true,
+    "pe_analysis": true,
+    "behavioral_analysis": true
+  },
+  "logging": {
+    "level": "INFO",
+    "file_path": "logs/aintivirus.log",
+    "max_size": "10MB",
+    "backup_count": 5
+  },
+  "gui": {
+    "theme": "modern",
+    "notifications": true,
+    "system_tray": true,
+    "auto_start": true
+  }
+}

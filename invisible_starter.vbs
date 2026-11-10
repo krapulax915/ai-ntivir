@@ -1,0 +1,1 @@
+CreateObject("Wscript.Shell").Run """C:\Program Files\AI_Antivirus\start_ai_antivirus.bat""", 0, False

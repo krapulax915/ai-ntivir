@@ -1,0 +1,7 @@
+{
+  "risk_threshold": 0.8,
+  "monitoring_interval": 10,
+  "enable_process_monitoring": true,
+  "enable_network_monitoring": true,
+  "enable_memory_monitoring": true
+}

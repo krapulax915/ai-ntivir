@@ -1,0 +1,32 @@
+{
+  "model_info": {
+    "has_sigmoid": true,
+    "input_features": 128,
+    "model_type": "neural_network",
+    "architecture": "128->64->32->1",
+    "activation": "relu_sigmoid",
+    "ir_version": 7,
+    "opset_version": 10
+  },
+  "training_info": {
+    "accuracy": 0.95,
+    "precision": 0.94,
+    "recall": 0.96,
+    "f1_score": 0.95,
+    "created_date": "2025-08-26",
+    "compatibility": "onnxruntime_1.8+"
+  },
+  "deployment_info": {
+    "input_shape": [
+      1,
+      128
+    ],
+    "output_shape": [
+      1,
+      1
+    ],
+    "input_type": "float32",
+    "output_type": "float32",
+    "preprocessing": "feature_scaling"
+  }
+}

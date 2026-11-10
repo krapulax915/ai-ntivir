@@ -1,0 +1,42 @@
+{
+  "providers": [
+    {
+      "provider_id": "malwarebazaar",
+      "name": "MalwareBazaar",
+      "api_url": "https://mb-api.abuse.ch/api/v1/",
+      "api_key": "",
+      "enabled": true,
+      "sync_interval": 60
+    },
+    {
+      "provider_id": "urlhaus",
+      "name": "URLhaus",
+      "api_url": "https://urlhaus-api.abuse.ch/v1/",
+      "api_key": "",
+      "enabled": true,
+      "sync_interval": 30
+    },
+    {
+      "provider_id": "threatfox",
+      "name": "ThreatFox",
+      "api_url": "https://threatfox-api.abuse.ch/api/v1/",
+      "api_key": "",
+      "enabled": true,
+      "sync_interval": 45
+    },
+    {
+      "provider_id": "virustotal",
+      "name": "VirusTotal",
+      "api_url": "https://www.virustotal.com/vtapi/v2/",
+      "api_key": "YOUR_VT_API_KEY",
+      "enabled": false,
+      "sync_interval": 120
+    }
+  ],
+  "sync_settings": {
+    "max_concurrent_syncs": 3,
+    "request_timeout": 30,
+    "retry_attempts": 3,
+    "batch_size": 1000
+  }
+}
