@@ -60,13 +60,13 @@ class LogManagementSystem:
         try:
             # Create log directories
             os.makedirs(self.log_directory, exist_ok=True)
-            os.makedirs(f"{self.log_directory}/scan_logs", exist_ok=True)
-            os.makedirs(f"{self.log_directory}/threat_logs", exist_ok=True)
-            os.makedirs(f"{self.log_directory}/system_logs", exist_ok=True)
+            os.makedirs(os.path.join(self.log_directory, 'scan_logs'), exist_ok=True)
+            os.makedirs(os.path.join(self.log_directory, 'threat_logs'), exist_ok=True)
+            os.makedirs(os.path.join(self.log_directory, 'system_logs'), exist_ok=True)
             
             # Create initial log files if they don't exist
-            threat_log_file = f"{self.log_directory}/threat_logs/threats.log"
-            system_log_file = f"{self.log_directory}/system_logs/system.log"
+            threat_log_file = os.path.join(self.log_directory, 'threat_logs', 'threats.log')
+            system_log_file = os.path.join(self.log_directory, 'system_logs', 'system.log')
             
             if not os.path.exists(threat_log_file):
                 with open(threat_log_file, 'w') as f:

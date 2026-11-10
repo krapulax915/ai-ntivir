@@ -1,0 +1,8 @@
+{
+  "_instructions": "Töltsd ki a SignPath.io adataiddal, majd nevezd át signpath_config.json-re. Az ApiToken-t ne commitold! (a signpath_config.json a .gitignore-ban van)",
+  "ApiToken": "PASTE_YOUR_SIGNPATH_API_TOKEN_HERE",
+  "OrganizationId": "PASTE_YOUR_ORGANIZATION_ID_HERE",
+  "ProjectId": "AI-NTIVIR",
+  "SigningPolicyId": "PASTE_YOUR_SIGNING_POLICY_ID_HERE",
+  "CertificateToUse": "MyApp_Test_Certificate"
+}

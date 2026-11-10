@@ -26,6 +26,9 @@ uploaded_logs_*.json
 build/
 dist/
 installer/output/
+installer/dist/
+installer/build/
+installer/signpath_config.json
 *.spec.bak
 
 # IDE / tools

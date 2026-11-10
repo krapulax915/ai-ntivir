@@ -31,6 +31,19 @@ class QuarantineManager:
             
             # CRITICAL: Quarantine goes INSIDE AI_Antivirus directory
             quarantine_dir = os.path.join(ai_antivirus_dir, "quarantine")
+
+            # FIX: fallback when the install directory is not writable. When the
+            # app is installed under C:\Program Files (or runs frozen from the
+            # PyInstaller _internal folder), creating the quarantine there fails
+            # with PermissionError for a standard user and quarantine_file()
+            # silently broke. Fall back to %PROGRAMDATA%\AI_Antivirus\quarantine.
+            try:
+                os.makedirs(quarantine_dir, exist_ok=True)
+            except (PermissionError, OSError) as perm_err:
+                program_data = os.environ.get('PROGRAMDATA', os.path.expanduser('~'))
+                quarantine_dir = os.path.join(program_data, 'AI_Antivirus', 'quarantine')
+                self.logger.warning(
+                    f"Install dir not writable ({perm_err}); quarantine redirected to {quarantine_dir}")
             
             self.logger.info(f"🔍 Quarantine path auto-detected: {quarantine_dir}")
             self.logger.info(f"   Installation directory: {ai_antivirus_dir}")
