@@ -9,9 +9,15 @@ from pathlib import Path
 import requests
 import sqlite3
 
+# Official mirror of the full signature database (~180 MB, ~559k entries).
+# The Inno Setup installer downloads it during installation; this fallback
+# covers plain-ZIP deployments where the database file is missing.
+SIGNATURE_DB_DOWNLOAD_URL = "https://files.catbox.moe/lkjqct.db"
+SIGNATURE_DB_SHA256 = "9e890c7177d5ccf307c3d3e4f410bc20b51cd10ad8651f33c951b3ca6b54de4b"
+
 class SignatureEngine:
     """Signature-based threat detection engine"""
-    
+
     def __init__(self, signature_db_path: str = None):
         try:
             from .comprehensive_logger import setup_module_logging
@@ -22,10 +28,59 @@ class SignatureEngine:
         self.signatures = {}
         self.hash_cache = {}
         self.lock = threading.Lock()
-        
+
+        # Download the signature database if it is missing entirely
+        self._ensure_database_downloaded()
+
         # Initialize signature database
         self._initialize_database()
         self._load_signatures()
+
+    def _ensure_database_downloaded(self):
+        """
+        If the signature database is missing (fresh install without the
+        installer download step, or a plain-ZIP deployment), download it once
+        from the official mirror. Any failure is non-fatal: the engine
+        continues with an empty database and rule-based detection still works.
+        """
+        try:
+            if os.path.exists(self.db_path) and os.path.getsize(self.db_path) > (1024 * 1024):
+                return  # database present and non-trivial
+
+            url = SIGNATURE_DB_DOWNLOAD_URL
+            self.logger.info(f"Signature database missing - downloading from official mirror: {url}")
+
+            db_dir = os.path.dirname(self.db_path) or '.'
+            os.makedirs(db_dir, exist_ok=True)
+            temp_path = self.db_path + '.downloading'
+
+            # Download to a temporary file first, then swap atomically
+            with requests.get(url, stream=True, timeout=60) as resp:
+                resp.raise_for_status()
+                with open(temp_path, 'wb') as fh:
+                    for chunk in resp.iter_content(chunk_size=1024 * 512):
+                        if chunk:
+                            fh.write(chunk)
+
+            # Verify integrity before replacing anything
+            sha = hashlib.sha256()
+            with open(temp_path, 'rb') as fh:
+                for chunk in iter(lambda: fh.read(1024 * 1024), b''):
+                    sha.update(chunk)
+            if sha.hexdigest() != SIGNATURE_DB_SHA256:
+                os.remove(temp_path)
+                self.logger.error("Downloaded signature database hash mismatch - discarded")
+                return
+
+            os.replace(temp_path, self.db_path)
+            self.logger.info("Signature database downloaded and verified successfully")
+        except Exception as e:
+            self.logger.warning(f"Signature database download skipped/failed (continuing without it): {e}")
+            try:
+                if os.path.exists(self.db_path + '.downloading'):
+                    os.remove(self.db_path + '.downloading')
+            except Exception:
+                pass
     
     def _initialize_database(self):
         """Initialize signature database"""

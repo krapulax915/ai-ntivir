@@ -28,6 +28,15 @@ Szükséges csomagok: PyQt5, numpy, scikit-learn, psutil, watchdog, requests, on
 Lásd `installer/` — PyInstaller + Inno Setup alapú .exe telepítő Windows 10/11-re
 (`installer/build_installer.bat`). Az AI-NTIVIR.exe és a telepítő kódaláírt (SignPath).
 
+A telepítő a **signatures.db-t (180 MB) telepítés közben tölti le** a hivatalos
+tükörről, így a telepítőfájl kicsi marad. Internetkapcsolat szükséges a telepítéshez.
+
+**Hivatalos szignatúra-adatbázis tükör (kézi letöltés):**
+<https://files.catbox.moe/lkjqct.db>
+sha256: `9e890c7177d5ccf307c3d3e4f410bc20b51cd10ad8651f33c951b3ca6b54de4b`
+Helye a telepítés után: `C:\Program Files\AI-NTIVIR\signatures\signatures.db`
+(app indításkor magától letölti, ha hiányzik)
+
 ## Projektstruktúra
 
 ```
@@ -39,7 +48,7 @@ src/detection/              szignatúra-, heurisztika-, anomália-motorok
 src/protection/             valós idejű védelem, böngészővédelem
 src/gui/                    PyQt5 felület
 models/                     ONNX modellek + scalerek
-signatures/                 signatures.db (Git LFS)
+signatures/                 signatures.db (Git LFS + telepítéskori letöltés)
 docs/                       fejlesztési dokumentáció (HU)
 tests/, tools/              tesztek és smoke-check
 ```

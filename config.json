@@ -9,7 +9,8 @@
   "signature_engine": {
     "database_path": "signatures/signatures.db",
     "auto_update": true,
-    "update_interval": 24
+    "update_interval": 24,
+    "download_url": "https://files.catbox.moe/lkjqct.db"
   },
   "anomaly_detector": {
     "threshold": 0.85,

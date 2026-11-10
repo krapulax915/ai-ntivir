@@ -43,6 +43,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 ; NOTE: PyInstaller writes to <repo root>\dist\AI-NTIVIR (relative to the spec).
 Source: "..\dist\AI-NTIVIR\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs ignoreversion
 
+; The signature database is NOT inside the installer (keeps it small):
+; it is downloaded from the official mirror during installation.
+; sha256: 9e890c7177d5ccf307c3d3e4f410bc20b51cd10ad8651f33c951b3ca6b54de4b
+Source: "https://files.catbox.moe/lkjqct.db"; DestDir: "{app}\signatures"; DestName: "signatures.db"; ExternalSize: 188567552; Flags: download external ignoreversion
+
 [Icons]
 Name: "{group}\AI-NTIVIR"; Filename: "{app}\AI-NTIVIR.exe"
 Name: "{group}\Uninstall AI-NTIVIR"; Filename: "{uninstallexe}"

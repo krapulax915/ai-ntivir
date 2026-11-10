@@ -16,10 +16,12 @@ a = Analysis(
     datas=[
         # Application source tree (imported at runtime via sys.path)
         ('..\\src', 'src'),
-        # Config + AI models + signature database
+        # Config + AI models.
+        # NOTE: signatures/signatures.db is NOT bundled (180 MB) - the Inno
+        # Setup installer downloads it from the official mirror at install
+        # time (see installer/AI-NTIVIR.iss, [Files] download entry).
         ('..\\config', 'config'),
         ('..\\models', 'models'),
-        ('..\\signatures\\signatures.db', 'signatures'),
         ('..\\config.json', '.'),
         ('..\\requirements.txt', '.'),
         ('..\\LICENSE', '.'),
