@@ -1,5 +1,8 @@
 # AI-NTIVIR (AI Antivirus) — BETA
 
+[![Build AI-NTIVIR installer](https://github.com/krapulax915/ai-ntivir/actions/workflows/build.yml/badge.svg)](https://github.com/krapulax915/ai-ntivir/actions/workflows/build.yml)
+[![VirusTotal](https://img.shields.io/badge/VirusTotal-0%2F64%20engines%20clean-brightgreen)](https://www.virustotal.com/gui/file/bf38769c6d012f46c82540d3a1ac6d79352f9773d36ffefcbe47b01371ebb839)
+
 Windows-alapú, Python 3.10 + PyQt5 fejlesztésű antivírus prototípus beépített AI-modellel.
 Python-based antivirus prototype with an onboard AI model (ONNX), for Windows 10/11.
 
