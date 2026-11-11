@@ -61,7 +61,7 @@ of this installer is a false positive.
 Requested action: allowlist this file (and future builds signed with the same
 certificate) in your detection systems.
 
-Contact: Daniel Bozsik — info@ai-ntivir.eu — https://github.com/krapulax915/ai-ntivir
+Contact: Daniel Bozsik — info@krapulixai.com — https://github.com/krapulax915/ai-ntivir
 
 Thank you!
 ```

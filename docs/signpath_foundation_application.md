@@ -48,7 +48,7 @@ the SignPath web UI or the SignPath REST API.
 
 Maintainer: Daniel Bozsik (Krapulix Soft)
 Country: Hungary
-E-mail: info@ai-ntivir.eu / info@krapulixai.com
+E-mail: info@krapulixai.com / info@krapulixai.com
 GitHub account: krapulax915
 
 VirusTotal for the current release: 47/47 engines clean

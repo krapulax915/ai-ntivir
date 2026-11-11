@@ -40,7 +40,7 @@ None. The project has no ads, no trackers and no third-party services.
 
 ## Contact
 
-Questions about this policy: **info@ai-ntivir.eu** or open an issue at
+Questions about this policy: **info@krapulixai.com** or open an issue at
 https://github.com/krapulax915/ai-ntivir
 
 ---
