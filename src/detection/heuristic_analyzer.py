@@ -69,12 +69,18 @@ class HeuristicAnalyzer:
             
             # Calculate combined heuristic score
             combined_score = (static_score + content_score + location_score) / 3.0
-            analysis_result['heuristic_score'] = min(combined_score, 1.0)
-            
+            # FIX (v1.0.5): cap the heuristic score at 0.6. Static heuristics
+            # (size/age/entropy of compressed installers) cannot distinguish a
+            # packed-but-legitimate setup (our own 131 MB installer scored
+            # 1.00!) from real malware - ONLY signature hits may declare a
+            # threat. 0.6 keeps the file "suspicious" (visible in results)
+            # without triggering quarantine.
+            analysis_result['heuristic_score'] = min(combined_score, 0.6)
+
             # Set threat/suspicious flags based on score
             if analysis_result['heuristic_score'] > 0.8:
                 analysis_result['is_threat'] = True
-            elif analysis_result['heuristic_score'] > 0.6:
+            elif analysis_result['heuristic_score'] >= 0.55:
                 analysis_result['is_suspicious'] = True
             
             return analysis_result
@@ -248,6 +254,15 @@ class HeuristicAnalyzer:
                     score += 0.3
                     result['suspicious_indicators'].append('Packed executable detected')
                 
+        except PermissionError:
+            # FIX (v1.0.5): protected system files are normal - debug only
+            self.logger.debug(f"PE analysis skipped (permission denied)")
+        except OSError as e:
+            if e.errno in (2, 22):
+                # reparse points (AppExecutionAlias) / vanished files - normal
+                self.logger.debug(f"PE analysis skipped (errno {e.errno})")
+            else:
+                self.logger.error(f"PE analysis error: {e}")
         except Exception as e:
             self.logger.error(f"PE analysis error: {e}")
         

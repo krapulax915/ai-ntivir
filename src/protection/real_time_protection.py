@@ -5,6 +5,7 @@ Enhanced file system monitoring with immediate threat response
 """
 
 import os
+import stat
 import time
 import threading
 import logging
@@ -108,6 +109,10 @@ class RealTimeProtectionHandler(FileSystemEventHandler):
             # Queue for scanning
             self.protection_engine.queue_file_scan(file_path, event_type, file_size)
             
+        except FileNotFoundError:
+            # FIX (v1.0.5): watcher events often reference temp files that
+            # vanish before we stat them - normal, not an error.
+            self.logger.debug(f"File vanished before scan: {file_path}")
         except Exception as e:
             self.logger.error(f"Error queuing file {file_path}: {e}")
     
@@ -116,7 +121,32 @@ class RealTimeProtectionHandler(FileSystemEventHandler):
         try:
             file_path_lower = file_path.lower()
             file_ext = Path(file_path).suffix.lower()
-            
+
+            # FIX (v1.0.5): SELF-EXCLUSION - never scan/flag our own installer
+            # or application files. The 131 MB compressed installer has maximal
+            # entropy, scored 1.00 in the heuristic engine and the app tried to
+            # quarantine itself ("EMERGENCY: Perfect threat score").
+            file_name = Path(file_path).name.lower()
+            if file_name.startswith('ai-ntivir'):
+                return False
+            app_dir = os.path.dirname(os.path.abspath(__file__))
+            if file_path_lower.startswith(app_dir.lower().replace('\\src\\protection', '')):
+                return False
+
+            # FIX (v1.0.5): skip zero-byte files (watcher fires on 0-byte
+            # freshly created download stubs -> "QUARANTINE FAILED: zero-byte
+            # file" spam) and Windows reparse points (AppExecutionAlias /
+            # Defender stubs -> [Errno 22] Invalid argument flood).
+            try:
+                file_stat = os.stat(file_path)
+                if file_stat.st_size == 0:
+                    return False
+                if hasattr(file_stat, 'st_file_attributes') and (
+                        file_stat.st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT):
+                    return False
+            except (OSError, FileNotFoundError):
+                return False
+
             # Always scan critical extensions
             if file_ext in self.critical_extensions:
                 return True

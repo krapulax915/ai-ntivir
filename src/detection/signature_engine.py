@@ -167,7 +167,10 @@ class SignatureEngine:
     def _check_hash_in_database(self, hash_value: str) -> Dict:
         """Check specific hash in database"""
         try:
-            conn = sqlite3.connect(self.db_path)
+            # FIX (v1.0.5): concurrent scans occasionally hit lock contention on
+            # the 180 MB database ("unable to open database file") - give the
+            # connection a generous busy timeout.
+            conn = sqlite3.connect(self.db_path, timeout=30)
             cursor = conn.cursor()
             
             cursor.execute('''
@@ -292,6 +295,19 @@ class SignatureEngine:
             
             return hashes
             
+        except PermissionError:
+            # FIX (v1.0.5): protected system files are normal during scans -
+            # downgrade to debug so errors.log stays meaningful.
+            self.logger.debug(f"Hash calculation skipped (permission denied): {file_path}")
+            return {}
+        except OSError as e:
+            if e.errno in (2, 22):
+                # 2: file vanished (partial download / Defender stub),
+                # 22: Windows reparse points (AppExecutionAlias) cannot be opened
+                self.logger.debug(f"Hash calculation skipped (errno {e.errno}): {file_path}")
+                return {}
+            self.logger.error(f"Hash calculation failed for {file_path}: {e}")
+            return {}
         except Exception as e:
             self.logger.error(f"Hash calculation failed for {file_path}: {e}")
             return {}
