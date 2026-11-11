@@ -28,6 +28,15 @@ Szükséges csomagok: PyQt5, numpy, scikit-learn, psutil, watchdog, requests, on
 Lásd `installer/` — PyInstaller + Inno Setup alapú .exe telepítő Windows 10/11-re
 (`installer/build_installer.bat`). Az AI-NTIVIR.exe és a telepítő kódaláírt (SignPath).
 
+### Letöltés / Downloads
+
+**[Releases oldal](https://github.com/krapulax915/ai-ntivir/releases)** — itt érhetők el az
+aláírt telepítők.
+
+> 🔏 **Code signing: this project uses the [SignPath Foundation](https://signpath.org) for code signing.**
+> (A projekt a SignPath Foundation programjának ingyenes, nyílt forráskódú kódaláíró tanúsítványát használja.)
+> Privacy policy: [PRIVACY.md](PRIVACY.md)
+
 A telepítő a **signatures.db-t (180 MB) telepítés közben tölti le** a hivatalos
 tükörről, így a telepítőfájl kicsi marad. Internetkapcsolat szükséges a telepítéshez.
 
