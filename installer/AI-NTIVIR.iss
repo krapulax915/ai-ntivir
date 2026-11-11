@@ -5,7 +5,7 @@
 ; Result: installer\output\AI-NTIVIR-Setup-<version>.exe
 
 #define MyAppName "AI-NTIVIR"
-#define MyAppVersion "1.0.1"
+#define MyAppVersion "1.0.2"
 #define MyAppPublisher "Krapulix Soft"
 #define MyAppURL "https://ai-ntivir.eu"
 

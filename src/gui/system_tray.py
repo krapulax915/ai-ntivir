@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (QSystemTrayIcon, QMenu, QAction, QApplication,
                             QMessageBox, QWidget, QVBoxLayout, QLabel, 
                             QPushButton, QHBoxLayout)
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QThread, pyqtSlot
-from PyQt5.QtGui import QIcon, QPixmap, QFont
+from PyQt5.QtGui import QIcon, QPixmap, QFont, QCursor
 import logging
 from datetime import datetime
 
@@ -220,14 +220,19 @@ class SystemTrayManager(QSystemTrayIcon):
             stats_menu.addAction(self.last_scan_action)
             
             menu.addSeparator()
-            
+
             # Exit
             exit_action = QAction("❌ Exit", self)
             exit_action.triggered.connect(self.exit_application.emit)
             menu.addAction(exit_action)
-            
-            self.setContextMenu(menu)
-            
+
+            # FIX (v1.0.2): do NOT rely on QSystemTrayIcon.setContextMenu - on
+            # some frozen/hidden-window setups Windows never shows it (right
+            # and left click did nothing). Keep a strong reference and show the
+            # menu explicitly from on_tray_activated().
+            self._context_menu = menu
+            self.logger.info("Tray context menu created (explicit-popup mode)")
+
         except Exception as e:
             self.logger.error(f"Error creating context menu: {e}")
     
@@ -240,12 +245,16 @@ class SystemTrayManager(QSystemTrayIcon):
     def on_tray_activated(self, reason):
         """Handle tray icon activation"""
         try:
-            if reason == QSystemTrayIcon.DoubleClick:
+            if reason in (QSystemTrayIcon.DoubleClick, QSystemTrayIcon.Trigger):
+                # Single left click or double click - open the dashboard
                 self.show_main_window.emit()
-            elif reason == QSystemTrayIcon.Trigger:
-                # Single click - show context menu on some systems
-                pass
-                
+            elif reason == QSystemTrayIcon.Context:
+                # Right click - show the menu explicitly at the cursor.
+                # (FIX v1.0.2: setContextMenu alone proved unreliable here.)
+                menu = getattr(self, '_context_menu', None)
+                if menu is not None:
+                    menu.exec_(QCursor.pos())
+
         except Exception as e:
             self.logger.error(f"Error handling tray activation: {e}")
     
