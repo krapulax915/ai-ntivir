@@ -2838,13 +2838,12 @@ class AntivirusMainWindow(QMainWindow):
                 scan_log_file = self.log_manager.create_scan_log("Enhanced Quick Scan", scan_data)
             
             # Import enhanced scanner
-            import sys
-            import os
-            enhanced_scan_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'enhanced_quick_scan_system.py')
-            if not os.path.exists(enhanced_scan_path):
-                raise ImportError(f"Enhanced quick scan system not found at: {enhanced_scan_path}")
-            
-            sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+            # FIX (v1.0.4): the source-era file-existence check killed the scan
+            # in the frozen app - PyInstaller compiles this module into the PYZ
+            # archive, so no .py file exists on disk and the ImportError was
+            # raised before the scan could ever start (silently, in this
+            # background thread). The plain import works both from source and
+            # in the frozen bundle.
             from enhanced_quick_scan_system import CriticalSystemScanner
             
             # Initialize scanner with available engines
