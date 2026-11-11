@@ -1,0 +1,7 @@
+{
+  "tag_name": "v1.0.5",
+  "target_commitish": "main",
+  "name": "AI-NTIVIR v1.0.5 BETA",
+  "prerelease": true,
+  "body": "## AI-NTIVIR (AI Antivirus) BETA - v1.0.5\n\nWindows 10/11 installer with:\n- Real-time protection with automatic quarantine (tested with EICAR)\n- 559,456-entry signature database (downloaded automatically during install)\n- Enhanced Quick Scan, Custom and Full scans\n- System tray menu, autostart, dashboard\n\n## Fixes in this release\n- Disabled degenerate AI scoring (constant score for all files)\n- Self-exclusion: the app no longer flags its own installer\n- Heuristic score capped at 0.6 - only signature hits can trigger quarantine\n- Tray menu fixed, autostart added, ProgramData-writable runtime data\n\n## Download\nThe signed installer (AI-NTIVIR-Setup-1.0.5.signed.exe) is attached below.\n\nCode signing: this project uses the SignPath Foundation for code signing (https://signpath.org).\n\nPrivacy policy: https://github.com/krapulax915/ai-ntivir/blob/main/PRIVACY.md\nSource code (MIT): https://github.com/krapulax915/ai-ntivir"
+}
