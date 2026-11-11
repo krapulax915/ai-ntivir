@@ -5,17 +5,17 @@
 > érdemes **most, a riasztások előtt** beadni, és minden jelentősebb verziónál megismételni
 > az új hash-sel.
 
-## Kitöltendő adatok (aktuális release)
+## Kitöltendő adatok (aktuális release — ALÁÍRT v1.0.5)
 
 | Mező | Érték |
 |---|---|
-| Fájl | `AI-NTIVIR-Setup-1.0.5.exe` |
-| SHA256 | `a66fc57fc4e6ebb899f8ca90f3678396ffa8630b26903c095d519de5f6397ed2` |
-| Méret | 137 729 603 bájt |
+| Fájl | `AI-NTIVIR-Setup-1.0.5.signed.exe` |
+| SHA256 | `bf38769c6d012f46c82540d3a1ac6d79352f9773d36ffefcbe47b01371ebb839` |
+| Méret | 137 741 733 bájt |
 | Aláíró | CN=Daniel Bozsik, O=Krapulix Soft (önaláírt tesztcert; SignPath Foundation kérelem folyamatban) |
 | Típus | Windows installer (Inno Setup) — PyInstaller csomagolt Python-alkalmazás |
-| Forráskód | https://github.com/krapulix915/ai-ntivir (MIT) |
-| VirusTotal | 47/47 motor tiszta *(ide illeszd be a saját VT-linket)* |
+| Forráskód | https://github.com/krapulax915/ai-ntivir (MIT) |
+| VirusTotal | **0/64 motor tiszta** — https://www.virustotal.com/gui/file/bf38769c6d012f46c82540d3a1ac6d79352f9773d36ffefcbe47b01371ebb839 |
 
 **Megjegyzés**: miután megjött a SignPath Foundation tanúsítvány, az **aláírt** fájl
 új SHA256-ával **ismételd meg** a kérelmeket — az aláírt build whitelistelése a
@@ -40,9 +40,9 @@ Size:             137,729,603 bytes
 Type:             Inno Setup installer (PyInstaller-bundled Python 3.10 application)
 Code signature:   CN=Daniel Bozsik, O=Krapulix Soft (self-signed test certificate;
                   application for a SignPath Foundation open-source certificate in progress)
-Source code:      https://github.com/krapulix915/ai-ntivir (public, MIT license)
-VirusTotal:       47/47 engines clean — no vendor flagged the file as malicious
-                  (<paste your VT analysis link here>)
+Source code:      https://github.com/krapulax915/ai-ntivir (public, MIT license)
+VirusTotal:       0/64 engines clean - no vendor flagged the file as malicious
+                  https://www.virustotal.com/gui/file/bf38769c6d012f46c82540d3a1ac6d79352f9773d36ffefcbe47b01371ebb839
 
 Intended behavior of the application (why it looks "antivirus-like"):
 - Monitors user folders (Downloads, Desktop, Documents, Temp) with a watchdog

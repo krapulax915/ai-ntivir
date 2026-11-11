@@ -36,6 +36,8 @@ aláírt telepítők.
 > 🔏 **Code signing: this project uses the [SignPath Foundation](https://signpath.org) for code signing.**
 > (A projekt a SignPath Foundation programjának ingyenes, nyílt forráskódú kódaláíró tanúsítványát használja.)
 > Privacy policy: [PRIVACY.md](PRIVACY.md)
+> VirusTotal (latest signed release, 64 engines): **0 detections** —
+> https://www.virustotal.com/gui/file/bf38769c6d012f46c82540d3a1ac6d79352f9773d36ffefcbe47b01371ebb839
 
 A telepítő a **signatures.db-t (180 MB) telepítés közben tölti le** a hivatalos
 tükörről, így a telepítőfájl kicsi marad. Internetkapcsolat szükséges a telepítéshez.
