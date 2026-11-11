@@ -17,6 +17,18 @@ from pathlib import Path
 gc.collect()
 gc.set_threshold(700, 10, 10)  # More aggressive garbage collection
 
+# FIX (v1.0.1): when frozen (PyInstaller), anchor the working directory to the
+# bundle (_internal) so all CWD-relative paths (config.json, models/,
+# signatures/) resolve correctly regardless of how the app was started.
+# Shortcuts, the HKLM Run key and Task Scheduler all start the process with
+# CWD=C:\Windows\System32 - without this the AI model and signature database
+# would be silently missed on autostart.
+if getattr(sys, 'frozen', False):
+    try:
+        os.chdir(sys._MEIPASS)
+    except Exception:
+        pass
+
 # Add src directory to Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
@@ -598,7 +610,12 @@ def main():
     parser.add_argument('--scan-type', choices=['quick', 'full'], default='quick',
                        help='Scan type (default: quick)')
     parser.add_argument('--config', type=str, help='Configuration file path')
-    
+    # FIX (v1.0.1): --show-gui was checked via sys.argv but never declared, so
+    # argparse exited with "unrecognized arguments" before reaching that check.
+    # The installer's post-install launch uses this flag.
+    parser.add_argument('--show-gui', action='store_true',
+                       help='Show the main window on start (default: hidden in system tray)')
+
     args = parser.parse_args()
     
     # Handle --gui flag
