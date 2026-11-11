@@ -1,0 +1,38 @@
+name: Build AI-NTIVIR installer
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build application bundle (PyInstaller)
+        run: pyinstaller installer/AI-NTIVIR.spec --noconfirm --clean
+
+      - name: Build installer (Inno Setup)
+        shell: cmd
+        run: '"C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\AI-NTIVIR.iss'
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI-NTIVIR-Setup
+          path: installer/output/AI-NTIVIR-Setup-*.exe
+          if-no-files-found: error

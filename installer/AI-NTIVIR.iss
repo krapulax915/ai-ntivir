@@ -22,6 +22,8 @@ DefaultGroupName=AI-NTIVIR
 LicenseFile=..\LICENSE
 OutputDir=output
 OutputBaseFilename=AI-NTIVIR-Setup-{#MyAppVersion}
+; CI note: GitHub Actions (windows-latest) runs this script automatically on
+; every push to main - see .github/workflows/build.yml
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
