@@ -460,9 +460,27 @@ class AIEngine:
     def predict_with_ai_model(self, file_path: str) -> Optional[float]:
         """Use AI model to predict if file is malicious"""
         try:
+            # FIX (v1.0.3): AI scoring DISABLED. Verified empirically on
+            # 2026-11-11: the bundled ONNX model outputs a CONSTANT ~0.4256
+            # for every real file (notepad.exe, cmd.exe, our own installer and
+            # MT4/MT5 installers alike) - only out-of-range synthetic inputs
+            # change it. That constant landed in the 'suspicious' band
+            # (0.3-0.6) and flagged every clean installer as suspicious.
+            # The model must be retrained on real, properly-scaled features
+            # (the shipped scaler has scale_=1.0 everywhere and the training
+            # set was 1000 constant template vectors) before it can
+            # contribute to scoring. Until then the signature engine
+            # (559,456 entries) and the rule-based analyzer provide detection.
+            if not getattr(AIEngine, '_ai_scoring_disabled_logged', False):
+                self.logger.warning(
+                    "AI scoring disabled: bundled model produces a constant score for all real files "
+                    "(degenerate training). Detection continues via 559k signatures + rule-based analyzer.")
+                AIEngine._ai_scoring_disabled_logged = True
+            return None
+
             if not self.model_loaded or self.session is None:
                 return None
-                
+
             # Extract features
             features = self.extract_file_features_for_ai(file_path)
             if features is None:
@@ -1307,21 +1325,20 @@ class AIEngine:
     def _fallback_analyze(self, features: Dict) -> float:
         """Fallback analysis without AI model"""
         threat_score = 0.0
-        
+
         # Suspicious extensions
         suspicious_extensions = ['.exe', '.scr', '.bat', '.cmd', '.ps1', '.vbs', '.js']
         if features.get('extension') in suspicious_extensions:
             threat_score += 0.3
-        
+
         # Large executable files
         if features.get('is_executable') and features.get('size', 0) > 10 * 1024 * 1024:  # >10MB
             threat_score += 0.2
-        
-        # Recently created files
-        current_time = time.time()
-        if current_time - features.get('creation_time', current_time) < 3600:  # <1 hour
-            threat_score += 0.1
-        
+
+        # FIX (v1.0.3): the 'recently created +0.1' bonus was removed - every
+        # file downloaded from the internet is recent by definition, so this
+        # bonus pushed every fresh installer into the suspicious band.
+
         return min(threat_score, 1.0)
     
     def _features_to_tensor(self, features: Dict) -> np.ndarray:

@@ -200,8 +200,11 @@ class RealTimeProtectionEngine:
             'auto_quarantine': True,
             'scan_archives': True,
             'scan_network_drives': False,
-            'threat_threshold': 0.6,
-            'suspicious_threshold': 0.3
+            # FIX (v1.0.3): raised. The rule-based analyzer scores common
+            # installers 0.3-0.6 (executable + large + recently created), and
+            # the old 0.3/0.6 thresholds flagged every clean installer.
+            'threat_threshold': 0.75,
+            'suspicious_threshold': 0.55
         }
         
         self._setup_logging()
@@ -542,8 +545,8 @@ class RealTimeProtectionEngine:
             quarantine_required = True
             quarantine_reason = f"EMERGENCY: Very high threat score: {threat_score:.2f}"
         
-        # Rule 1: High threat score (>0.7) - MANDATORY quarantine
-        elif threat_score >= 0.7:
+        # Rule 1: High threat score (>=0.8) - MANDATORY quarantine
+        elif threat_score >= 0.8:
             quarantine_required = True
             quarantine_reason = f"High threat score: {threat_score:.2f}"
         
@@ -554,17 +557,17 @@ class RealTimeProtectionEngine:
         
         # Rule 3: Suspicious file extensions - MANDATORY quarantine
         elif any(file_path.lower().endswith(ext) for ext in ['.com', '.scr', '.pif', '.bat', '.cmd']):
-            if threat_score >= 0.4:  # Lower threshold for dangerous extensions
+            if threat_score >= 0.65:  # FIX v1.0.3: was 0.4 - too FP-prone
                 quarantine_required = True
                 quarantine_reason = f"Dangerous extension + threat score: {threat_score:.2f}"
         
         # Rule 4: Download folder threats - MANDATORY quarantine
-        elif 'downloads' in file_path.lower() and threat_score >= 0.3:
+        elif 'downloads' in file_path.lower() and threat_score >= 0.65:  # FIX v1.0.3: was 0.3
             quarantine_required = True
             quarantine_reason = f"Download folder threat: {threat_score:.2f}"
         
         # Rule 5: Partial/temporary files with threats - MANDATORY quarantine
-        elif any(ext in file_path.lower() for ext in ['.part', '.tmp', '.temp']) and threat_score >= 0.5:
+        elif any(ext in file_path.lower() for ext in ['.part', '.tmp', '.temp']) and threat_score >= 0.65:  # FIX v1.0.3: was 0.5
             quarantine_required = True
             quarantine_reason = f"Temporary/partial file threat: {threat_score:.2f}"
         

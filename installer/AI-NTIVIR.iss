@@ -5,7 +5,7 @@
 ; Result: installer\output\AI-NTIVIR-Setup-<version>.exe
 
 #define MyAppName "AI-NTIVIR"
-#define MyAppVersion "1.0.2"
+#define MyAppVersion "1.0.3"
 #define MyAppPublisher "Krapulix Soft"
 #define MyAppURL "https://ai-ntivir.eu"
 
@@ -60,6 +60,12 @@ Name: "{group}\Uninstall AI-NTIVIR"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\AI-NTIVIR"; Filename: "{app}\AI-NTIVIR.exe"; Tasks: desktopicon
 
 [Run]
+; FIX (v1.0.3): several engines write runtime databases (ai_learning.db,
+; browser_protection.db, anomaly DBs, logs) relative to the app bundle, which
+; is read-only under Program Files for a standard user ("unable to open
+; database file" floods). Grant the Users group modify rights on the bundle.
+Filename: "{sys}\icacls.exe"; Parameters: """{app}\_internal"" /grant *S-1-5-32-545:(OI)(CI)M /T"; Flags: runhidden
+
 ; Launch with the dashboard visible after installation (without --show-gui the
 ; app starts hidden in the system tray and the user sees nothing).
 Filename: "{app}\AI-NTIVIR.exe"; Parameters: "--show-gui"; Description: "Launch AI-NTIVIR"; Flags: nowait postinstall skipifsilent

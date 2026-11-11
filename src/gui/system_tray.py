@@ -174,11 +174,13 @@ class SystemTrayManager(QSystemTrayIcon):
     def create_context_menu(self):
         """Create context menu for system tray"""
         try:
-            # FIX: the menu needs a parent. setContextMenu does NOT take
-            # ownership - without a parent the local QMenu was garbage-collected
-            # right after this method returned and the tray right-click menu
-            # (with Start Protection) disappeared/crashed.
-            menu = QMenu(self)
+            # FIX (v1.0.3): QMenu's parent must be a QWidget. SystemTrayManager
+            # extends QSystemTrayIcon (NOT a QWidget), so QMenu(self) raised
+            # "argument 1 has unexpected type 'SystemTrayManager'" and the whole
+            # menu creation failed. A parentless QMenu kept alive by a strong
+            # instance reference is the standard PyQt pattern for tray menus.
+            menu = QMenu()
+            self._context_menu = menu  # strong reference - prevents GC
             
             # Main window action
             show_action = QAction("🖥️ Show AI Antivirus", self)
@@ -318,7 +320,12 @@ class SystemTrayManager(QSystemTrayIcon):
                 # Update statistics in menu
                 files_scanned = stats.get('files_scanned', 0)
                 threats_detected = stats.get('threats_detected', 0)
-                
+
+                # FIX (v1.0.3): guard the action attributes - if the context
+                # menu could not be created, these do not exist and this 5s
+                # timer flooded the log with AttributeError.
+                if not hasattr(self, 'files_scanned_action'):
+                    return
                 self.files_scanned_action.setText(f"Files Scanned: {files_scanned}")
                 self.threats_detected_action.setText(f"Threats Detected: {threats_detected}")
                 
