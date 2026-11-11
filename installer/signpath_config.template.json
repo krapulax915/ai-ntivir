@@ -1,5 +1,7 @@
 {
-  "_instructions": "Töltsd ki a SignPath.io adataiddal, majd nevezd át signpath_config.json-re. Az ApiToken-t ne commitold! (a signpath_config.json a .gitignore-ban van)",
+  "_instructions": "Töltsd ki a SignPath adataiddal, majd nevezd át signpath_config.json-re. Az ApiToken-t ne commitold! (a signpath_config.json a .gitignore-ban van)",
+  "_foundation_flow": "1) Jelentkezz a SignPath Foundation programra (docs/signpath_foundation_application.md - kesz szoveggel). 2) Jovahagyas utan az org-ban: Project 'AI-NTIVIR' + Foundation Signing Policy hozzarendeles. 3) A lenti 4 ertek kitoltese. 4) build_installer.bat vagy sign_with_signpath.ps1 (nyers .exe-t kuldosz!).",
+  "_test_cert_note": "A regi tesztcert (MyApp_Test_Certificate) 2026-11-17-en jar le - a Foundation cert megjelenesevel az uj SigningPolicyId-t hasznald, a ProjectId maradhat 'AI-NTIVIR'.",
   "ApiToken": "PASTE_YOUR_SIGNPATH_API_TOKEN_HERE",
   "OrganizationId": "PASTE_YOUR_ORGANIZATION_ID_HERE",
   "ProjectId": "AI-NTIVIR",
